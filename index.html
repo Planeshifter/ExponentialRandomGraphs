@@ -2,6 +2,8 @@
 <html>
 <head>
 	<meta charset="utf-8">
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <link rel="stylesheet" href="css/custom.css">
 		<style type="text/css">
 			.link {
 			  fill: none;
@@ -13,6 +15,11 @@
 			  stroke: #333;
 			  stroke-width: 1.5px;
 			}
+    p { text-align: left; }
+
+    li { text-align: left;}
+
+    .center { text-align: center; }
 
 			node_label {
 			  font: 10px sans-serif;
@@ -23,7 +30,7 @@
 		</style>
 		<title>Exponential random graph models and their log-linear representations</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="description" content="Prsentation for Discrete Multivariate Analysis">
 		<meta name="author" content="Philipp Burckhardt">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
@@ -31,7 +38,6 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="css/reveal.min.css">
 		<link rel="stylesheet" href="css/theme/sky.css" id="theme">
 
 		<!-- For syntax highlighting -->
@@ -57,31 +63,439 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section>
-					<h1>Reveal.js</h1>
-					<h3>HTML Presentations Made Easy</h3>
-					<p>
-						<small>Created by <a href="http://hakim.se">Hakim El Hattab</a> / <a href="http://twitter.com/hakimel">@hakimel</a></small>
+					<h1>Network Models</h1>
+					<h3>Exponential Random Graphs and their Log-Linear Representations</h3>
+					<p class="center">
+						<small>by <a href="http://www.philipp-burckhardt.com">Philipp Burckhardt</a></small>
 					</p>
 				</section>
+        <section>
+          <h2>Outline</h2>
+          <ol>
+            <li>Motivating Example</li>
+            <li>Features of Social Networks</li>
+            <li>History of Social Network Models</li>
+            <li> Exponential Random Graph Models
+              <ul>
+              <li>$\beta$-Model</li>
+              <li>$p_1$-Model</li>
+              <li>Log-linear representation</li>
+              <li>Exponential Random Graph Models (ERGMs)</li>
+              </ul>
+            </li>
+          </ol>
+        </section>
 				<section>
-					<h2>Heads Up</h2>
-					<p>
-						reveal.js is a framework for easily creating beautiful presentations using HTML. You'll need a browser with
-						support for CSS 3D transforms to see it in its full glory.
-						$$
-							4x + 3
-						$$
-					<div id="oneEdge"></div>
-					</p>
-
-					<aside class="notes">
-						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
-					</aside>
+          <aside class="note">
+            We regard the observed network as realization of a statistical network model
+          </aside>
+          <aside class="note">
+            Relations could be directed or undirected, signed or valued
+          </aside>
+           <aside class="note">
+            Networks represent data on relations between actors
+          </aside>
+          <div id="sampsonGraph"></div>
+					<h2>Sampson Monk Data Set</h2>
 				</section>
+        <section>
+          <h2>Common Features of Social Networks</h2>
+          <ul>
+            <li>Mutuality of ties</li>
+            <li>Heterogeneity in propensity to form ties </li>
+            <li>Homophily of attributes (formation of ties due to similar personal traits) </li>
+            <li>Context is important $\implies$ triads, not dyads should be fundamental social unit, Simmel (1950)</li>
+            <li>...</li>
+          </ul>
+        </section>
+        <section>
+          <section data-transition="none">
+            <h3>A Bit of History</h3>
+            <ul>
+           <li>Early work in Sociology (Moreno, Simmel)</li>
+           <li>Statistical Network Models 1970s (Holland & Leinhardt, Fienberg &
+            Wasserman)</li>
+            <li>Journal Social Networks published since 1979</li>
+         </ul>
+          </section>
+          <section data-transition="none">
+            <h3>A Bit of History</h3>
+            <ul>
+           <li>Early work in Sociology (Moreno, Simmel)</li>
+           <li>Statistical Network Models 1970s (Holland & Leinhardt, Fienberg &
+            Wasserman)</li>
+            <li>Journal Social Networks published since 1979</li>
+           <li>Spatial Statistics (Besag 1974, Ripley 1981)</li>
+           <li>Exponential Family Theory (Barndorff-Nielsen 1978)</li>
+           <li>Statistical Physics (Barabási, Watts)</li>
+           <li>Machine Learning:
+            <ul>
+              <li>Stochastic blockmodels (Choi, Snijders)</li>
+              <li>Mixed-Membership Models (Airoldi et. al, 2008) </li>
+            </ul>
+            </li>
+           <li>Graphical Models?</li>
+         </ul>
+          </section>
+        </section>
+        <section>
+            <section>
+            <h2>Edges of Graph are Random Variables</h2>
+             <table style="width:100%;">
+              <tr>
+                <th></td>
+                <th>Graphical Model</td>
+                <th>Network Model</td>
+              </tr>
+              <tr>
+                <th>Nodes</td>
+                <td>Random</td>
+                <td>Fixed</td>
+              </tr>
+              <tr>
+                <th>Edges</td>
+                <td>Fixed, express conditional independence</td>
+                <td>Random, express relation between nodes</td>
+              </tr>
+            </table>
+          </section>
+           <section>
+          <h2>Edges of Graph are Random Variables</h2>
+          <ul>
+            <li>We first consider undirected graphs</li>
+            <li>Let $X_{ij} \in \{ 0, 1\}$ be indicator random variables. </li>
+            <li>$X_{i,j} = X_{j,i} = 1$ if there exists an edge between $i$ and $j$.</li>
+          <aside class="note">
+          <div id="undirectedExample"></div></aside>
+            <li>$X_{ii} = 0$ by convention </li>
+            <li>Set $\{ X_{i,j} : i < j\}$ of indicator random variables uniquely characterizes network</li>
+          </ul>
+        </section>
+
+        </section>
+        <section>
+               <h2>Beta Model</h2>
+               <ul>
+                <li>Extension of Erdős–Rényi random graph model in which the probability of observing an edge between two nodes is $p$</li>
+                <li>Allows for heterogeneity in propensity of nodes to form ties: $P \left( X_{i,j} = 1\right)$ not all equal to $p$</li>
+              </ul>
+        </section>
+        <section>
+          <section data-transition="none">
+            <h2>Beta Model</h2>
+            <p class="left">Models log odds of existences of edge between nodes $i$ and $j$:</p>
+            $$
+            \log \frac{P \left( X_{ij} = 1\right)}{1 - P \left( X_{ij} = 1\right)} = \beta_i + \beta_j \quad \forall i \ne j
+            $$
+            <aside class="note">Closely related to Bradley-Terry model for paired comparisons</aside>
+           $$
+           \definecolor{lviolet}{RGB}{114,0,172}
+           \definecolor{lgreen}{RGB}{45,177,93}
+           \definecolor{lred}{RGB}{251,0,29}
+           \definecolor{lblue}{RGB}{18,110,213}
+           \definecolor{circle}{RGB}{217,86,16}
+           \definecolor{average}{RGB}{203,23,206}
+           $$
+          </section>
+            <section data-transition="none">
+            <h2>Beta Model</h2>
+            <p class="left">Models log odds of existences of edge between nodes $i$ and $j$:</p>
+            $$
+            \log \frac{ {\color{lred} P \left( X_{ij} = 1\right) }} {1 -  {\color{lred} P \left( X_{ij} = 1\right)}} = \beta_i + \beta_j \quad \forall i \ne j
+            $$
+            <ul>
+              <li>In simplest form, model for graph with undirected edges and $n$ vertices. Edges are Bernoulli random variables with probabilities $\color{lred}p_{i,j}$</li>
+            </ul>
+          </section>
+          <section data-transition="none">
+          <h2>Beta Model</h2>
+          <p class="left">Models log odds of existences of edge between nodes $i$ and $j$:</p>
+            $$
+            \log \frac{ {\color{lred} p_{i,j} }} {1 - {\color{lred} p_{i,j} }} = \beta_i + \beta_j \quad \forall i \ne j
+            $$
+            <ul>
+              <li>In simplest form, model for graph with undirected edges and $n$ vertices. Edges are Bernoulli random variables with probabilities $\color{lred}p_{i,j}$</li>
+            </ul>
+          </section>
+          <section data-transition="none">
+           <h2>MLE</h2>
+           <p>The likelihood function for the $\beta$ model is given by</p>
+           $$
+            p(x ; \beta) = \prod_{i < j} p_{i,j}^{x_{i,j}} \left( 1 - p_{i,j} \right)^{1-x_{i,j}} = \prod_{i < j} \left(  \frac{ p_{i,j}}{1-p_{i,j}} \right)^{x_{ij}} \left( 1 - p_{i,j} \right)
+           $$
+          </section>
+          <section data-transition="none">
+          <h2>MLE</h2>
+          <p>The likelihood function for the $\beta$ model is given by</p>
+           $$
+            p(x ; \beta) = \prod_{i < j} p_{i,j}^{x_{i,j}} \left( 1 - p_{i,j} \right)^{1-x_{i,j}} = \prod_{i < j} \left(  \frac{ p_{i,j}}{1-p_{i,j}} \right)^{x_{ij}} \left( 1 - p_{i,j} \right)
+           $$
+           <p>Written in exponential family form:</p>
+           $$
+            p(x ; \beta) = \exp \left( \sum_{i < j} x_{i,j} \log \frac{ p_{i,j}}{1-p_{i,j}} + \log(1+p_{i,j})  \right)
+           $$
+          </section>
+          <section data-transition="none">
+          <h2>Sufficient Statistics</h2>
+           $$
+           \begin{align}
+            p(x ; \beta)
+            &= \exp \left( \sum_{i < j} x_{i,j} \; {\color{lred} \log \frac{ p_{i,j}}{1-p_{i,j}} } + \sum_{i < j} \log(1+p_{i,j})  \right) \\
+            &= \exp \left( \sum_{i < j} x_{i,j} \; {\color{lred}\beta_i} + \sum_{i < j} x_{i,j} \; {\color{lred}\beta_j} -  A(\beta) \right) \\
+            &= \exp \left( \sum_{i=1}^n \beta_i \left[ \sum_{j > i} x_{i,j} +  \sum_{j < i} x_{i,j} \right] - A(\beta) \right)
+           \end{align}
+           $$
+          </section>
+          <section data-transition="none">
+          <h2>Sufficient Statistics</h2>
+           $$
+            p(x ; \beta)
+            = \exp \left( \sum_{i=1}^n \beta_i \underbrace{ \left[ \sum_{j > i} x_{i,j} +  \sum_{j < i} x_{i,j}\right]}_{{\color{lviolet}d_i}} - A(\beta) \right)
+           $$
+           <ul>
+           <li>Minimal sufficient statistics $\color{lviolet} d_i$, the number of neighbors of node $i$ (degree of node $i$)</li>
+           <li>the vector $\color{lviolet} d(x)$ consisting of all $\color{lviolet} d_i$ is called the degree sequence of the graph $x$</li>
+           </ul>
+          </section>
+        </section>
+        <section>
+          <section data-transition="none">
+            <h3>Moment Equations for MLE</h3>
+            <ul>
+             <li>Maximum likelihood estimates are given by solution to equation
+              $\mathbb{E}[{\color{lviolet}d(X)}] = \color{lviolet} d(x)$
+             </li>
+            </ul>
+          </section>
+          <section data-transition="none">
+            <h3>Moment Equations for MLE</h3>
+            <ul>
+             <li>Maximum likelihood estimates are given by solution to equation
+              $\mathbb{E}[{\color{lviolet}d(X)}] = \color{lviolet} d(x)$
+             </li>
+             <li>Hence, $\hat \beta$ found by
+               $$
+                d_i = \sum_{j \ne i} {\color{circle}\frac{\exp(\hat \beta_i + \hat \beta_j)}{1 + \exp(\hat \beta_i + \hat \beta_j)}},\qquad i=1, \ldots, n
+               $$
+               as
+               $$
+               \mathbb{E}[{\color{lviolet}d_i(X)}] = \mathbb{E} \left[ {\color{lviolet} \sum_{j > i} X_{i,j} +  \sum_{j < i} X_{i,j} }  \right] = \mathbb{E}\left[\sum_{j \ne i} X_{ij} \right] = \sum_{j \ne i} {\color{circle}p_{ij}}
+               $$
+             </li>
+            </ul>
+          </section>
+          <section data-transition="none">
+            <h3>Existence of MLE</h3>
+            <ul>
+             <li>Does the MLE exist?</li>
+             <li>Note that parameter space $\{ \beta_i \}_{i=1, \ldots, n}$ grows with the number of nodes</li>
+             <li>But although we only observe one graph, there are ${n \choose 2}  = \frac{n (n-1)}{2}$ indicator variables $X_{ij}$, making estimation tractable most of the time</li>
+             <li>Conditions for Existence of MLE in the $\beta$-model:</li>
+            </ul>
+            <div class="definition box">
+             Rinaldo, A., Petrović, S., & Fienberg, S. E. (2011). Maximum lilkelihood estimation in the $\beta$-model.
+             </div>
+          </section>
+        </section>
+        <section>
+          <section data-transition="none">
+            <h2>$p_1$-Model</h2>
+            <h3>(Holland & Leinhardt 1981)</h3>
+            <ul>
+              <li>Again $n$ actors, but this time directed edges</li>
+              <aside class="note">
+                <div id="directedExample"></div>
+              </aside>
+              <li>Decompose X into $n \choose 2$ dyads $D_{ij} = (X_{ij},X_{ji})$ for $i < j$</li>
+            </ul>
+          </section>
+          <section data-transition="none">
+          <h2>$p_1$-Model</h2>
+          <ul>
+            <li>Model the probability of an edge between nodes $i$ and $j$:</li>
+            $$
+            \begin{align}
+            P(D_{ij} &= (0,0)) \propto \exp \left( 0 \right) \\
+            P(D_{ij} &= (1,0)) \propto \exp \left( \alpha_i + \beta_j + \theta \right) \\
+            P(D_{ij} &= (0,1)) \propto \exp \left( \alpha_j + \beta_i + \theta \right) \\
+            P(D_{ij} &= (1,1)) \propto \exp \left( \alpha_i + \beta_j + \alpha_j + \beta_i + 2\theta + \rho \right)
+            \end{align}
+            $$
+          </ul>
+          </section>
+           <section data-transition="none">
+          <h2>$p_1$-Model</h2>
+          <ul>
+            <li>Model the probability of an edge between nodes $i$ and $j$:</li>
+            $$
+            \begin{align}
+            \log P(D_{ij} &= (0,0))  = \lambda_{ij}  \\
+            \log P(D_{ij} &= (1,0))  = \lambda_{ij}  + \alpha_i + \beta_j + \theta  \\
+            \log P(D_{ij} &= (0,1))  = \lambda_{ij} + \alpha_j + \beta_i + \theta  \\
+            \log P(D_{ij} &= (1,1))  = \lambda_{ij} + \alpha_i + \beta_j + \alpha_j + \beta_i + 2\theta + {\color{lviolet} \rho}
+            \end{align}
+            $$
+            <li>${\color{lviolet} \rho}$ is <i>force of reciprocation</i></li>
+          </ul>
+          </section>
+          <section data-transition="none">
+          <h2>$p_1$-Model</h2>
+          <ul>
+            <li>Model the probability of an edge between nodes $i$ and $j$:</li>
+            $$
+            \begin{align}
+            \log P(D_{ij} &= (0,0))  = \lambda_{ij}  \\
+            \log P(D_{ij} &= (1,0)) = \lambda_{ij} +  \alpha_i + \beta_j + {\color{circle}\theta} \\
+            \log P(D_{ij} &= (0,1)) = \lambda_{ij} + \alpha_j + \beta_i + {\color{circle}\theta}  \\
+            \log P(D_{ij} &= (1,1)) = \lambda_{ij} + \alpha_i + \beta_j + \alpha_j + \beta_i + 2{\color{circle}\theta} + {\color{lviolet} \rho}
+            \end{align}
+            $$
+            <li>${\color{lviolet} \rho}$ is <i>force of reciprocation</i></li>
+            <li>${\color{circle} \theta}$ is <i>density parameter</i> (= governs number of edges in digraph)</li>
+          </ul>
+          </section>
+          <section data-transition="none">
+          <h2>$p_1$-Model</h2>
+          <ul>
+            <li>Model the probability of an edge between nodes $i$ and $j$:</li>
+            $$
+            \begin{align}
+            \log P(D_{ij} &= (0,0)) = \lambda_{ij}  \\
+            \log P(D_{ij} &= (1,0)) = \lambda_{ij} + {\color{lgreen} \alpha_i} + \beta_j + {\color{circle}\theta}  \\
+            \log P(D_{ij} &= (0,1)) = \lambda_{ij} + {\color{lgreen} \alpha_j} + \beta_i + {\color{circle}\theta}  \\
+            \log P(D_{ij} &= (1,1)) = \lambda_{ij} + {\color{lgreen} \alpha_i} + \beta_j + {\color{lgreen} \alpha_j} + \beta_i + 2{\color{circle}\theta} + {\color{lviolet} \rho}
+            \end{align}
+            $$
+            <li>${\color{lviolet} \rho}$ is <i>force of reciprocation</i></li>
+            <li>${\color{circle} \theta}$ is <i>density parameter</i> (= governs number of edges in digraph)</li>
+            <li>${\color{lgreen} \alpha_i}$ is <i>productivity parameter</i>, governs how likely it is for node $i$ to have outgoing ties</li>
+          </ul>
+          </section>
+          <section data-transition="none">
+          <h2>$p_1$-Model</h2>
+          <ul>
+            <li>Model the probability of an edge between nodes $i$ and $j$:</li>
+            $$
+            \begin{align}
+            \log P(D_{ij} &= (0,0)) = \lambda_{ij}  \\
+            \log P(D_{ij} &= (1,0)) =  \lambda_{ij} + {\color{lgreen} \alpha_i} + {\color{lviolet} \beta_j} + {\color{circle}\theta}  \\
+            \log P(D_{ij} &= (0,1)) =  \lambda_{ij} + {\color{lgreen} \alpha_j} + {\color{lviolet} \beta_i} + {\color{circle}\theta}  \\
+            \log P(D_{ij} &= (1,1)) = \lambda_{ij} + {\color{lgreen} \alpha_i} + {\color{lviolet} \beta_j} + {\color{lgreen} \alpha_j} + {\color{lviolet} \beta_i} + 2{\color{circle}\theta} + {\color{lblue} \rho}
+            \end{align}
+            $$
+            <li>${\color{lblue} \rho}$ is <i>force of reciprocation</i></li>
+            <li>${\color{circle} \theta}$ is <i>density parameter</i> (= governs number of edges in digraph)</li>
+            <li>${\color{lgreen} \alpha_i}$ is <i>productivity parameter</i>, governs how likely it is for node $i$ to have outgoing ties</li>
+            <li>${\color{lviolet} \beta_i}$ is <i>attractiveness parameter</i> as it governs how many incoming ties a node has </li>
+          </ul>
+          </section>
+          <section data-transition="none">
+            <h2>$p_1$-Model</h2>
+            $$
+            \begin{align}
+            \log P(D_{ij} &= (0,0)) = \lambda_{ij} \\
+            \log P(D_{ij} &= (1,0)) = \lambda_{ij} + {\color{lgreen} \alpha_i} + {\color{lviolet} \beta_j} + {\color{circle}\theta} \\
+            \log P(D_{ij} &= (0,1)) = \lambda_{ij} + {\color{lgreen} \alpha_j} + {\color{lviolet} \beta_i} + {\color{circle}\theta} \\
+            \log P(D_{ij} &= (1,1)) = \lambda_{ij} + {\color{lgreen} \alpha_i} + {\color{lviolet} \beta_j} + {\color{lgreen} \alpha_j} + {\color{lviolet} \beta_i} + 2{\color{circle}\theta} + {\color{lblue} \rho}
+            \end{align}
+            $$
+            <div class="definition box">
+              Likelihood is of exponential form and evaluates to
+              $$
+              p_1(x) \propto \exp \left( {\color{lblue} \rho} \sum_{ij} x_{ij} x_{ji} + {\color{circle}\theta} x_{++} + \sum_i {\color{lgreen} \alpha_i}  x_{i+} + \sum_j {\color{lviolet} \beta_j} x_{+j} \right)
+              $$
+            </div>
+          </section>
+        </section>
+        <section>
+          <section>
+              <h2>Log-Linear Representation</h2>
+              <ul>
+                <li>Define
+                $$
+                y_{{\color{blue}i}{\color{circle}j}{\color{average}k}{\color{lgreen}l}} = \begin{cases}
+                              1 & \text{if } D_{{\color{blue}i}{\color{circle}j}} = (x_{{\color{blue}i}{\color{circle}j}}, x_{{\color{circle}j}{\color{blue}i}}) = ({\color{average}k},{\color{lgreen}l}) \\
+                              0 & \text{otherwise}
+                            \end{cases}
+                $$
+                which yields ${\color{blue} n} \times {\color{circle}n} \times {\color{average}2} \times {\color{lgreen}2}$ array with $y_{iikl}$ equal to zero for all $i$ and $y_{ijkl} = y_{jilk}$.
+                </li>
+                <li>Fienberg & Wasserman (1981) have shown that fitting the $p_1$ model to $x$ corresponds to estimating the no second-factor interaction model on $y$, i.e. the following log-linear model:
+                $$
+                [12] [13] [24] [14] [23] [34]
+                $$</li>
+                <li>Use of standard iterative proportional fitting</li>
+              </ul>
+          </section>
+          <section>
+            <h2>Log-Linear Representation</h2>
+            <div class="definition box">
+              Corresponding log-linear model:
+              $$
+              \scriptsize \log y_{ijkl} = u_{12(ij)} + u_{13(ik)} + u_{24(jl)} + u_{14(il)} + u_{23(jk)} + u_{34(kl)}.
+              $$
+            </div>
+              <p>Here:
+              $$
+              {\scriptsize
+              \begin{align}
+                    u_{12(ij)} &= \lambda_{ij} \\
+                    u_{13(ik)} &= \left( \alpha_i + \theta \right) \times I(k=1) \\
+                    u_{24(jl)} &= \left( \alpha_j + \theta \right) \times I(l=1) \\
+                    u_{14(il)} &=  \beta_i \times I(l=1) \\
+                    u_{23(jk)} &=  \beta_j  \times I(k=1) \\
+                    u_{34(kl)} &= \rho \times I(k=1,l=1) \\
+              \end{align}
+              }
+              $$
+              </p>
+          </section>
+          <section>
+            <h2>Sufficient Statistics</h2>
+            $$
+            \begin{align}
+              1/2 y_{++11} &= \sum_{i < j} x_{ij} x_{ji} &\text{number of mutuals} \\
+              y_{i+1+} &= x_{i+} &\text{out-degree of node } i \\
+              y_{+j+1} &= x_{+j} &\text{in-degree of node } j \\
+              y_{++1+} &= x_{++} &\text{total number of choices} \\
+            \end{align}
+            $$
+          </section>
+        </section>
+        <section>
+          <section data-transition="none">
+          <h2>ERGMs or $p^*$-models</h2>
+          <h3> (Frank & Strauss 1986)</h3>
+          <ulu
+            <li>Extend the $p_1$ class  by adding topoligical features of the graph, e.g. the mumber of triangles
+            $$
+            T(x) = \sum_{i,j,k} x_{ij} x_{jk} x_{ki}.
+            $$
+            by adding an additional parameter multiplied with $T(x)$ to the likelihood of the $p_1$ model:
+            $$
+            \log p(x) \propto \tau T(x) + \rho m + \theta x_{++} + \sum_i a_i x_{i+} + \sum_j \beta_j x_{+j}
+            $$
+            </li>
+            <li>No dyadic independence anymore, joint density cannot be written as product of individual components</li>
+           </ul>
+          </section>
+          <section data-transition="none">
+             <h2>ERGMs or $p^*$-models</h2>
+            <h3> (Frank & Strauss 1986)</h3>
+            <ul>
+            <li>Normalizing contant for $p(x)$ is a sum over all possible graphs $\implies$ intractable to compute
+              <ul>
+                <li>Independent-dyad approximation (Strauss & Ikeda, 1990)</li>
+                <li>MCMC approaches (e.g. Snijders, 2002)</li>
+              </ul></li>
+            </ul>
+          </section>
+        </section>
 			</div>
 	</div>
 	<script src="lib/js/head.min.js"></script>
 	<script src="js/reveal.min.js"></script>
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	<script>
 
@@ -91,20 +505,15 @@
 				controls: true,
 				progress: true,
 				history: true,
-				center: true,
+				center: false,
 				slideNumber: true,
 
 				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
 
 				// Parallax scrolling
 				parallaxBackgroundImage: 'https://dl.dropboxusercontent.com/u/8439596/Shutterstock/shutterstock_137931206.jpg',
 				parallaxBackgroundSize: '2100px 900px',
-
-				math: {
-		        mathjax: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js',
-		        config: 'TeX-AMS_HTML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
-		    },
 
 				// Optional libraries used to extend on reveal.js
 				dependencies: [
@@ -118,80 +527,306 @@
 				]
 			});
 
+MathJax.Hub.Config({ TeX: { extensions: ["color.js"] }});
+
 var graph = {};
 graph.nodes = [{name:"Bob"},{name:"Alice"}];
 graph.links = [{"source":1,"target":0,"value":1}];
 
-var width = 960,
-    height = 500;
+var sampson = {}
+sampson.nodes = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R"].map(function(e){
+  var o = {};
+  o.name = e;
+  return o;
+})
+sampson.links = [{"source": 0, "target": 1, "value":1},
+  {"source": 0, "target": 2, "value":1},
+  {"source": 0, "target": 4, "value":1},
+  {"source": 1, "target": 2, "value":1},
+  {"source": 1, "target": 4, "value":1},
+  {"source": 1, "target": 5, "value":1},
+  {"source": 2, "target": 1, "value":1},
+  {"source": 2, "target": 6, "value":1},
+  {"source": 2, "target": 7, "value":1},
+  {"source": 3, "target": 1, "value":1},
+  {"source": 3, "target": 2, "value":1},
+  {"source": 3, "target": 4, "value":1},
+  {"source": 4, "target": 1, "value":1},
+  {"source": 4, "target": 3, "value":1},
+  {"source": 4, "target": 5, "value":1},
+  {"source": 5, "target": 1, "value":1},
+  {"source": 5, "target": 6, "value":1},
+  {"source": 5, "target": 10, "value":1},
+  {"source": 6, "target": 2, "value":1},
+  {"source": 6, "target": 3, "value":1},
+  {"source": 6, "target": 4, "value":1},
+  {"source": 7, "target": 8, "value":1},
+  {"source": 7, "target": 9, "value":1},
+  {"source": 7, "target": 12, "value":1},
+  {"source": 8, "target": 7, "value":1},
+  {"source": 8, "target": 10, "value":1},
+  {"source": 8, "target": 15, "value":1},
+  {"source": 9, "target": 7, "value":1},
+  {"source": 9, "target": 8, "value":1},
+  {"source": 9, "target": 12, "value":1},
+  {"source": 10, "target": 7, "value":1},
+  {"source": 10, "target": 8, "value":1},
+  {"source": 10, "target": 11, "value":1},
+  {"source": 11, "target": 7, "value":1},
+  {"source": 11, "target": 9, "value":1},
+  {"source": 11, "target": 12, "value":1},
+  {"source": 12, "target": 7, "value":1},
+  {"source": 12, "target": 9, "value":1},
+  {"source": 12, "target": 13, "value":1},
+  {"source": 13, "target": 9, "value":1},
+  {"source": 13, "target": 11, "value":1},
+  {"source": 13, "target": 12, "value":1},
+  {"source": 14, "target": 1, "value":1},
+  {"source": 14, "target": 12, "value":1},
+  {"source": 14, "target": 17, "value":1},
+  {"source": 15, "target": 8, "value":1},
+  {"source": 15, "target": 14, "value":1},
+  {"source": 15, "target": 16, "value":1},
+  {"source": 15, "target": 17, "value":1},
+  {"source": 16, "target": 9, "value":1},
+  {"source": 16, "target": 15, "value":1},
+  {"source": 16, "target": 17, "value":1},
+  {"source": 17, "target": 9, "value":1},
+  {"source": 17, "target": 15, "value":1},
+  {"source": 17, "target": 16, "value":1}
+    ]
 
-var force = d3.layout.force()
-    .nodes(graph.nodes)
-    .links(graph.links)
-    .size([width, height])
-    .linkDistance(200)
-    .charge(-300)
-    .on("tick", tick)
-    .start();
+plotBidirectedNetwork(sampson, 600, 600, "#sampsonGraph", 400, 1, 6)
+plotUndirectedNetwork(graph, 200, 150, "#undirectedExample", 90, 2, 9)
+plotEllipticalNetwork(graph, 200, 150, "#directedExample", 90, 2, 9)
 
-var svg = d3.select("#oneEdge").append("svg")
-    .attr("width", width)
-    .attr("height", height);
+function plotEllipticalNetwork(data, width, height, htmlID, distance, strokeWidth, circleRadius){
+  var width = width || 960,
+      height = height || 500;
 
-// Per-type markers, as they don't inherit styles.
-svg.append("defs").selectAll("marker")
-    .data(["established"])
-  .enter().append("marker")
-    .attr("id", function(d) { return d; })
-    .attr("viewBox", "0 -5 10 10")
-    .attr("refX", 15)
-    .attr("refY", -1.5)
-    .attr("markerWidth", 6)
-    .attr("markerHeight", 6)
-    .attr("orient", "auto")
-  .append("path")
-    .attr("d", "M0,-5L10,0L0,5");
+  var force = d3.layout.force()
+      .nodes(data.nodes)
+      .links(data.links)
+      .size([width, height])
+      .linkDistance(distance)
+      .charge(-300)
+      .on("tick", tick)
+      .start();
 
-var path = svg.append("g").selectAll("path")
-    .data(force.links())
-  	.enter().append("path")
-    .attr("class", "link established")
-    .attr("marker-end", function(d) { return "url(#established)"; });
+  var svg = d3.select(htmlID).append("svg")
+      .attr("width", width)
+      .attr("height", height);
 
-var circle = svg.append("g").
-		selectAll("circle")
-    .data(force.nodes())
-  	.enter().append("circle")
-    .attr("r", 10)
-    .attr("class","node")
-    .call(force.drag);
+  // Per-type markers, as they don't inherit styles.
+  svg.append("defs").selectAll("marker")
+      .data(["established"])
+    .enter().append("marker")
+      .attr("id", function(d) { return d; })
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 15)
+      .attr("refY", -1.5)
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+    .append("path")
+      .attr("d", "M0,-5L10,0L0,5");
 
-var text = svg.append("g").selectAll("text")
-    .data(force.nodes())
-  	.enter()
-  	.append("text")
-    .attr("x", 12)
-    .attr("y", ".31em")
-    .attr("class","node_label")
-    .text(function(d) { return d.name; });
+  var path = svg.append("g").selectAll("path")
+      .data(force.links())
+      .enter().append("path")
+      .attr("class", "link established")
+      .style("stroke-width",strokeWidth)
+      .attr("marker-end", function(d) { return "url(#established)"; });
 
-// Use elliptical arc path segments to doubly-encode directionality.
-function tick() {
-  path.attr("d", linkArc);
-  circle.attr("transform", transform);
-  text.attr("transform", transform);
+  var circle = svg.append("g").
+      selectAll("circle")
+      .data(force.nodes())
+      .enter().append("circle")
+      .attr("r", 5)
+      .attr("class","node")
+      .call(force.drag);
+
+  var text = svg.append("g").selectAll("text")
+      .data(force.nodes())
+      .enter()
+      .append("text")
+      .attr("x", 12)
+      .attr("y", ".31em")
+      .attr("class","node_label")
+      .text(function(d) { return d.name; });
+
+  // Use elliptical arc path segments to doubly-encode directionality.
+  function tick() {
+    path.attr("d", linkArc);
+    circle.attr("transform", transform);
+    text.attr("transform", transform);
+  }
+
+  function linkArc(d) {
+    var dx = d.target.x - d.source.x,
+        dy = d.target.y - d.source.y,
+        dr = Math.sqrt(dx * dx + dy * dy);
+    return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+  }
+
+  function transform(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+  }
 }
 
-function linkArc(d) {
-  var dx = d.target.x - d.source.x,
-      dy = d.target.y - d.source.y,
-      dr = Math.sqrt(dx * dx + dy * dy);
-  return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+function plotBidirectedNetwork(data, width, height, htmlID, distance, strokeWidth, circleRadius){
+  var width = width || 960,
+      height = height || 500;
+
+  var force = d3.layout.force()
+      .nodes(data.nodes)
+      .links(data.links)
+      .size([width, height])
+      .linkDistance(distance)
+      .charge(-300)
+      .start();
+
+  var svg = d3.select(htmlID).append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+  // Per-type markers, as they don't inherit styles.
+  svg.append("defs").selectAll("marker")
+      .data(["established"])
+    .enter().append("marker")
+      .attr("id", function(d) { return d; })
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 15)
+      .attr("refY", -1.5)
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+    .append("path")
+      .attr("d", "M0,-5L10,0L0,5");
+
+  var path = svg.append("g").selectAll("path")
+      .data(force.links())
+      .enter().append("line")
+      .attr("class", "link established")
+      .attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; })
+      .attr("marker-end", function(d) { return "url(#established)"; });
+
+  var circle = svg.append("g").
+      selectAll("circle")
+      .data(force.nodes())
+      .enter().append("circle")
+      .attr("r", function(){
+        return circleRadius || 5
+      })
+      .attr("class","node")
+      .attr("transform", transform)
+      .call(force.drag);
+
+  var text = svg.append("g").selectAll("text")
+      .data(force.nodes())
+      .enter()
+      .append("text")
+      .attr("x", 12)
+      .attr("y", ".31em")
+      .attr("class","node_label")
+      .attr("transform",transform)
+      .text(function(d) { return d.name; });
+
+  // Use elliptical arc path segments to doubly-encode directionality.
+  function tick() {
+    path.attr("d", linkArc);
+    circle.attr("transform", transform);
+    text.attr("transform", transform);
+  }
+
+  function linkArc(d) {
+    var dx = d.target.x - d.source.x,
+        dy = d.target.y - d.source.y,
+        dr = Math.sqrt(dx * dx + dy * dy);
+    return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+  }
+
+  function transform(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+  }
 }
 
-function transform(d) {
-  return "translate(" + d.x + "," + d.y + ")";
+function plotUndirectedNetwork(data, width, height, htmlID, distance, strokeWidth, circleRadius){
+  var width = width || 960,
+      height = height || 500;
+
+  var force = d3.layout.force()
+      .nodes(data.nodes)
+      .links(data.links)
+      .size([width, height])
+      .linkDistance(distance)
+      .charge(-100)
+      .on("tick", tick)
+      .start();
+
+  var svg = d3.select(htmlID).append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+  // Per-type markers, as they don't inherit styles.
+  svg.append("defs").selectAll("marker")
+      .data(["established"])
+    .enter().append("marker")
+      .attr("id", function(d) { return d; })
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 15)
+      .attr("refY", -1.5)
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+    .append("path")
+      .attr("d", "M0,-5L10,0L0,5");
+
+  var path = svg.append("g").selectAll("path")
+      .data(force.links())
+      .enter().append("path")
+      .attr("class", "link established")
+      .style("stroke-width",strokeWidth);
+
+  var circle = svg.append("g").
+      selectAll("circle")
+      .data(force.nodes())
+      .enter().append("circle")
+      .attr("r", circleRadius)
+      .attr("class","node")
+      .call(force.drag);
+
+  var text = svg.append("g").selectAll("text")
+      .data(force.nodes())
+      .enter()
+      .append("text")
+      .attr("x", 12)
+      .attr("y", ".31em")
+      .attr("class","node_label")
+      .text(function(d) { return d.name; });
+
+  // Use elliptical arc path segments to doubly-encode directionality.
+  function tick() {
+    path.attr("d", linkArc);
+    circle.attr("transform", transform);
+    text.attr("transform", transform);
+  }
+
+  function linkArc(d) {
+    var dx = d.target.x - d.source.x,
+        dy = d.target.y - d.source.y,
+        dr = Math.sqrt(dx * dx + dy * dy);
+    return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+  }
+
+  function transform(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+  }
 }
+
 
 		</script>
 </body>

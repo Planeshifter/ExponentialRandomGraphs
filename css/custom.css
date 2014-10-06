@@ -1,0 +1,23 @@
+ div .definition, .box {
+      background-color: lightgray;
+      border: 1px solid lightblue;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+      display: inline-block;
+    }
+div  .definition {
+      margin: 1em 0;
+      padding: 1em 2em;
+      text-align: center;
+    }
+
+aside.note {
+      background-color: lightgray;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+      float: right;
+      font-size: 14pt;
+      line-height: 1em;
+      margin-left: 2em;
+      padding: 1em;
+      text-align: left;
+      width: 200px;
+    }
